@@ -1,0 +1,85 @@
+<!--#Copyright (C) 2017  Alexandre BOUDINE
+#
+#This program is free software: you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#(at your option) any later version.
+#
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License
+#along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+
+<div class="contextual">
+	<% if @block_options.present? %>
+
+    <%
+      @templates_array = LayoutTemplate.all #Get all Templates
+      @templates_array = @templates_array.map{|w| [w.title, w.id]}
+      @templates_array.unshift(['',-1]) #add an empty slot and build a select list
+    %>
+    <label for="template_select" class="load_label"><%= l(:load_template) %> : </label>
+    <%= select_tag(:template_select, options_for_select(@templates_array), {:onChange => "javascript: loadTemplate(this);", :class => 'template_import', :style => "margin: 0px 3px 0px 0px;"}) %>
+
+    <hr style="width: 1px; height: 10px; display: inline-block; margin: 0px 3px 0px 3px;" class="separator">
+
+	  <%= form_tag({:action => "add_block"}, :id => "block-form") do %>
+	  <%= label_tag('block-select', l(:label_my_page_block)) %>:
+	  <%= select_tag 'block',
+	                 content_tag('option') + options_for_select(@block_options),
+	                 :id => "block-select" %>
+	  <%= hidden_field_tag('user_id',@user_id) %>
+	  <%= link_to l(:button_add), '#', :onclick => '$("#block-form").submit()', :class => 'icon icon-add' %>
+	  <% end %>
+
+	<% end %>
+</div>
+
+<h2><%=l(:label_my_page)%></h2>
+
+<div id="list-top" class="block-receiver">
+  <% @blocks['top'].each do |b|
+     next unless AnotherController::BLOCKS.keys.include? b %>
+  <%= render :partial => 'block', :locals => {:user => @user, :block_name => b} %>
+  <% end if @blocks['top'] %>
+</div>
+
+<div id="list-left" class="splitcontentleft block-receiver">
+  <% @blocks['left'].each do |b|
+     next unless AnotherController::BLOCKS.keys.include? b %>
+  <%= render :partial => 'block', :locals => {:user => @user, :block_name => b} %>
+  <% end if @blocks['left'] %>
+</div>
+
+<div id="list-right" class="splitcontentright block-receiver">
+  <% @blocks['right'].each do |b|
+     next unless AnotherController::BLOCKS.keys.include? b %>
+  <%= render :partial => 'block', :locals => {:user => @user, :block_name => b} %>
+  <% end if @blocks['right'] %>
+</div>
+
+<%= javascript_tag "initMyPageSortable('top', '#{ escape_javascript url_for(:action => "order_blocks", :group => "top", :user_id => @user_id) }');" %>
+<%= javascript_tag "initMyPageSortable('left', '#{ escape_javascript url_for(:action => "order_blocks", :group => "left", :user_id => @user_id) }');" %>
+<%= javascript_tag "initMyPageSortable('right', '#{ escape_javascript url_for(:action => "order_blocks", :group => "right", :user_id => @user_id) }');" %>
+
+<script type="text/javascript">
+  function loadTemplate(item){
+    var template = item.options[item.selectedIndex].value;
+    if(template != -1 && template != null){
+      $.ajax({
+        url: "/another/load_template",
+        type: "POST",
+        data: {
+          layout_template_id: template,
+          user_id: '<%= @user_id %>'
+        },
+        success: function(html){
+          location.reload();
+        }
+      });
+    }
+  }
+</script>

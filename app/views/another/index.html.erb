@@ -1,0 +1,57 @@
+<!--#Copyright (C) 2017  Alexandre BOUDINE
+#
+#This program is free software: you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#(at your option) any later version.
+#
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License
+#along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+
+<h2><%= l(:title_other_users_my_page) %></h2>
+<%
+  @users_array = User.all #Get all Users
+  @users_array = @users_array.sort_by{|w| w.firstname}
+  @users_array = @users_array.map{|w| [(w.firstname+' '+w.lastname), w.id]}
+  @users_array.unshift(['',-1]) #add an empty slot and build a select list
+%>
+
+<div style="text-align:right;">
+	<%= render :partial => 'multiple_user_template' %>
+</div>
+
+<div>
+	<%= l(:select_user) %>
+	<%= select_tag(:user_select, options_for_select(@users_array), {:onChange => "javascript: showPage(this);"}) %>
+</div>
+
+<hr>
+
+<div id='another_page_content'>
+	<% if @user_id != nil %>
+		<%= render :partial => 'layout', :locals => {:user => @user, :block_options => @block_options, :blocks => @blocks} %>
+	<% end %>
+</div>
+
+
+
+
+<script type="text/javascript">
+	function showPage(item){
+		var user = item.options[item.selectedIndex].value;
+		if(user != -1 && user != null){
+			location.href = '/another?user_id='+user
+		}else{
+			location.href = '/another'
+		}
+	}
+
+	<% if @user_id != nil %>
+		$('#user_select option[value=<%= @user_id %>]').attr('selected','selected');
+	<% end %>
+</script>

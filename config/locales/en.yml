@@ -1,0 +1,22 @@
+# English strings go here for Rails i18n
+en:
+  label_manage_other: Manage other users pages
+  
+  export_template: Save to Template
+  load_template: Load Template
+  delete_template: Delete Template
+  cancel: Cancel
+
+  title_other_users_my_page: Manage Other Users 'My Page'
+  title_template_multiple_users: Apply a template to several users
+  select_user: Select a user
+
+
+  error_save_user_pref: Error, unable to save user preferences.
+  error_load_template: Error, unable to load Template.
+  error_save_template: Error, unable to save Template.
+  error_delete_template: Error, unable to delete Template.
+  error_title: Error, please enter valid title.
+  error_multiple_users_select: Error, please select at least one user.
+
+  notice_save_template: Template saved.

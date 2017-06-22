@@ -1,0 +1,57 @@
+<!--#Copyright (C) 2017  Alexandre BOUDINE
+#
+#This program is free software: you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#(at your option) any later version.
+#
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License
+#along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+
+
+<%
+  @users_array2 = User.all #Get all Users
+  @users_array2 = @users_array2.sort_by{|w| w.firstname}
+  @users_array2 = @users_array2.map{|w| [(w.firstname+' '+w.lastname), w.id]}
+%>
+<%
+  @templates_array = LayoutTemplate.all #Get all Templates
+  @templates_array = @templates_array.map{|w| [w.title, w.id]}
+  @templates_array.unshift(['',-1]) #add an empty slot and build a select list
+%>
+<p><strong><%= l(:title_template_multiple_users) %></strong></p>
+<label for="template_select" class="load_label"><%= l(:load_template) %> : </label>
+<%= select_tag(:template_select, options_for_select(@templates_array), {:onChange => "javascript: applyTemplates(this);", :class => 'template_import', :style => "margin: 0px 3px 0px 0px;"}) %>
+<%= select_tag(:multiple_user_select, options_for_select(@users_array2), {:multiple => true}) %>
+
+
+<script type="text/javascript">
+  function applyTemplates(item){
+  	var users = document.getElementById('multiple_user_select')
+  	var opt = users.options
+  	var select = []
+  	for(var i=0; i<opt.length; i++){
+  		if(opt[i].selected) select.push(opt[i].value)
+  	}
+
+    var template = item.options[item.selectedIndex].value;
+    if(template != -1 && template != null){
+      $.ajax({
+        url: "/another/load_template_multiuser",
+        type: "POST",
+        data: {
+          layout_template_id: template,
+          users_ids: select
+        },
+        success: function(html){
+          location.reload();
+        }
+      });
+    }
+  }
+</script>

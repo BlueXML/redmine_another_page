@@ -1,0 +1,22 @@
+# French strings go here for Rails i18n
+fr:
+  label_manage_other: Gestion de la page des autres utilisateurs
+  
+  export_template: Enregistrer le Template
+  load_template: Charger un Template
+  delete_template: Supprimer un Template
+  cancel: Annuler
+
+  title_other_users_my_page: Gestion de la page 'Ma Page' des autres utilisateurs
+  title_template_multiple_users: Appliquer un template à plusieurs utilisateurs
+  select_user: Sélectionnez un utilisateur
+
+
+  error_save_user_pref: Erreur, impossible de sauvegarder les modifications.
+  error_load_template: Erreur, impossible de charger le Template.
+  error_save_template: Erreur, impossible de sauver le Template.
+  error_delete_template: Erreur, impossible de supprimer le Template.
+  error_title: Erreur, veuillez entrer un titre valide.
+  error_multiple_users_select: Erreur, veuillez selectionner au moins un utilisateur.
+
+  notice_save_template: Template sauvegardé.

@@ -1,0 +1,104 @@
+<!--#Copyright (C) 2017  Alexandre BOUDINE
+#
+#This program is free software: you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#(at your option) any later version.
+#
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License
+#along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+
+<% if controller and controller.class.name == 'MyController' and controller.action_name == "page_layout" %>
+
+	<hr style="width: 1px; height: 10px; display: inline-block; margin: 0px 3px 0px 3px;" class="separator">
+
+	<%= link_to_if(User.current.admin? ,l(:export_template), 'javascript:;', :onclick => "createTemplate();", :class => 'template_export icon icon-save', :style => "margin: 0px 3px 0px 10px;") %>
+
+	<%
+	  @templates_array = LayoutTemplate.all #Get all Templates
+	  @templates_array = @templates_array.map{|w| [w.title, w.id]}
+	  @templates_array.unshift(['',-1]) #add an empty slot and build a select list
+	%>
+	<label for="template_select" class="load_label"><%= l(:load_template) %> : </label>
+	<%= select_tag(:template_select, options_for_select(@templates_array), {:onChange => "javascript: loadTemplate(this);", :class => 'template_import', :style => "margin: 0px 3px 0px 0px;"}) %>
+
+	<%= link_to_if(User.current.admin? ,l(:delete_template), "javascript:;" , {:class => 'template_delete icon icon-del', :style => "margin: 0px 10px 0px 0px;", :onclick => "$(this).toggle(); $('#template_select_delete').toggle(); $('.cancel_delete').toggle();"} ) %>
+
+	<% if User.current.admin? %>
+		<%= select_tag(:template_select_delete, options_for_select(@templates_array), {:onChange => "javascript: deleteTemplate(this);", :class => 'template_select_delete', :style => "margin: 0px 3px 0px 0px; display: none;"}) %>
+		<%= link_to_if(User.current.admin? ,l(:cancel), "javascript:;" , {:class => 'cancel_delete', :style => "margin: 0px 10px 0px 0px; display: none;", :onclick => "$(this).toggle(); $('#template_select_delete').toggle(); $('.template_delete').toggle();"} ) %>
+	<% end %>
+
+
+
+	<script type="text/javascript">
+		function createTemplate(){
+			var title = prompt("Title");
+			if(title != null){
+				$.ajax({
+					url: "/layout_template/create",
+					type: "POST",
+					data: {
+						title: title,
+					},
+					success: function(html){
+						location.reload();
+					}
+				});
+			}
+		}
+
+		function loadTemplate(item){
+			var template = item.options[item.selectedIndex].value;
+			if(template != -1 && template != null){
+				$.ajax({
+					url: "/layout_template/load",
+					type: "POST",
+					data: {
+						layout_template_id: template,
+					},
+					success: function(html){
+						location.reload();
+					}
+				});
+			}
+		}
+
+		function deleteTemplate(item){
+			var template = item.options[item.selectedIndex].value;
+			if(template != -1 && template != null){
+				var conf = confirm("Are you sure you want to delete the template '"+item.options[item.selectedIndex].text+"' ?");
+				if (conf) {
+
+					$.ajax({
+						url: "/layout_template/destroy",
+						type: "POST",
+						data: {
+							layout_template_id: template,
+						},
+						success: function(html){
+							location.reload();
+						}
+					});
+
+					$(item).toggle();
+					$('.template_delete').toggle();
+					$('.cancel_delete').toggle();
+				}
+			}
+		}
+
+		$('.contextual:first').prepend($('.separator'));
+		$('.contextual:first').prepend($('.template_export'));
+		$('.contextual:first').prepend($('.template_import'));
+		$('.contextual:first').prepend($('.load_label'));
+		$('.contextual:first').prepend($('.template_delete'));
+		$('.contextual:first').prepend($('.cancel_delete'));
+		$('.contextual:first').prepend($('.template_select_delete'));
+	</script>
+<% end %>
