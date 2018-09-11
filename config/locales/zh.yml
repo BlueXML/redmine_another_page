@@ -1,0 +1,22 @@
+# Simplified Chinese strings go here for Rails i18n
+zh:
+  label_manage_other: 管理用户工作台
+
+  export_template: 保存为模板
+  load_template: 加载模板
+  delete_template: 删除模板
+  cancel: 取消
+
+  title_other_users_my_page: 用户工作台管理
+  title_template_multiple_users: 针对特定用户应用模板
+  select_user: 选择用户
+
+
+  error_save_user_pref: 系统错误，无法保存用户配置信息！
+  error_load_template: 系统错误，无法加载模板！
+  error_save_template: 系统错误，无法保存模板！
+  error_delete_template: 系统错误，无法删除模板！
+  error_title: 系统错误，请输入有效的标题信息！
+  error_multiple_users_select: 系统错误，请选择至少一个用户！
+
+  notice_save_template: 模板已保存！
